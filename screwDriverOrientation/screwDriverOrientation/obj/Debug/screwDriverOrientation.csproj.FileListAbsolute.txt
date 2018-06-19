@@ -1,0 +1,56 @@
+C:\Users\ProBook\source\repos\screwDriverOrientation\screwDriverOrientation\bin\Debug\screwDriverOrientation.exe.config
+C:\Users\ProBook\source\repos\screwDriverOrientation\screwDriverOrientation\bin\Debug\screwDriverOrientation.exe
+C:\Users\ProBook\source\repos\screwDriverOrientation\screwDriverOrientation\bin\Debug\screwDriverOrientation.pdb
+C:\Users\ProBook\source\repos\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.csprojAssemblyReference.cache
+C:\Users\ProBook\source\repos\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.orientationWin.resources
+C:\Users\ProBook\source\repos\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.Properties.Resources.resources
+C:\Users\ProBook\source\repos\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.csproj.GenerateResource.cache
+C:\Users\ProBook\source\repos\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.csproj.CoreCompileInputs.cache
+C:\Users\ProBook\source\repos\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.exe
+C:\Users\ProBook\source\repos\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.pdb
+C:\Users\ProBook\Documents\Vincent MAIRE\MPU\AppV2\screwDriverOrientation\screwDriverOrientation\bin\Debug\screwDriverOrientation.exe.config
+C:\Users\ProBook\Documents\Vincent MAIRE\MPU\AppV2\screwDriverOrientation\screwDriverOrientation\bin\Debug\screwDriverOrientation.exe
+C:\Users\ProBook\Documents\Vincent MAIRE\MPU\AppV2\screwDriverOrientation\screwDriverOrientation\bin\Debug\screwDriverOrientation.pdb
+C:\Users\ProBook\Documents\Vincent MAIRE\MPU\AppV2\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.csprojAssemblyReference.cache
+C:\Users\ProBook\Documents\Vincent MAIRE\MPU\AppV2\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.orientationWin.resources
+C:\Users\ProBook\Documents\Vincent MAIRE\MPU\AppV2\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.Properties.Resources.resources
+C:\Users\ProBook\Documents\Vincent MAIRE\MPU\AppV2\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.csproj.GenerateResource.cache
+C:\Users\ProBook\Documents\Vincent MAIRE\MPU\AppV2\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.csproj.CoreCompileInputs.cache
+C:\Users\ProBook\Documents\Vincent MAIRE\MPU\AppV2\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.exe
+C:\Users\ProBook\Documents\Vincent MAIRE\MPU\AppV2\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.pdb
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppV3\screwDriverOrientation\screwDriverOrientation\bin\Debug\screwDriverOrientation.exe.config
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppV3\screwDriverOrientation\screwDriverOrientation\bin\Debug\screwDriverOrientation.exe
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppV3\screwDriverOrientation\screwDriverOrientation\bin\Debug\screwDriverOrientation.pdb
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppV3\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.csprojAssemblyReference.cache
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppV3\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.orientationWin.resources
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppV3\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.Properties.Resources.resources
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppV3\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.csproj.GenerateResource.cache
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppV3\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.csproj.CoreCompileInputs.cache
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppV3\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.exe
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppV3\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.pdb
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithCalib\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.csprojAssemblyReference.cache
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithCalib\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.orientationWin.resources
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithCalib\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.Properties.Resources.resources
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithCalib\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.csproj.GenerateResource.cache
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithCalib\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.csproj.CoreCompileInputs.cache
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithCalib\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.exe
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithCalib\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.pdb
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithCalib\screwDriverOrientation\screwDriverOrientation\bin\Debug\screwDriverOrientation.exe.config
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithCalib\screwDriverOrientation\screwDriverOrientation\bin\Debug\screwDriverOrientation.exe
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithCalib\screwDriverOrientation\screwDriverOrientation\bin\Debug\screwDriverOrientation.pdb
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithCalib\screwDriverOrientation\screwDriverOrientation\bin\Debug\geometry3Sharp.dll
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithCalib\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.csproj.CopyComplete
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithAHRS\screwDriverOrientation\screwDriverOrientation\bin\Debug\screwDriverOrientation.exe.config
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithAHRS\screwDriverOrientation\screwDriverOrientation\bin\Debug\screwDriverOrientation.exe
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithAHRS\screwDriverOrientation\screwDriverOrientation\bin\Debug\screwDriverOrientation.pdb
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithAHRS\screwDriverOrientation\screwDriverOrientation\bin\Debug\geometry3Sharp.dll
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithAHRS\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.csprojAssemblyReference.cache
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithAHRS\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.orientationWin.resources
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithAHRS\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.Properties.Resources.resources
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithAHRS\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.csproj.GenerateResource.cache
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithAHRS\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.csproj.CoreCompileInputs.cache
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithAHRS\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.csproj.CopyComplete
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithAHRS\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.exe
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithAHRS\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.pdb
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithAHRS\screwDriverOrientation\screwDriverOrientation\bin\Debug\System.Numerics.Vectors.dll
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\AppWithAHRS\screwDriverOrientation\screwDriverOrientation\bin\Debug\System.Numerics.Vectors.xml
