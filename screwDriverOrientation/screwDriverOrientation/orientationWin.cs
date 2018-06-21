@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Windows.Forms;
 using System.Drawing;
 using System.Numerics;
+using System.Windows.Forms;
+
 
 namespace screwDriverOrientation
 {
@@ -9,13 +10,12 @@ namespace screwDriverOrientation
     {
         mag magnetometer = new mag();
         float yaw, pitch, roll;
-        float yawOrigin, pitchOrigin, rollOrigin;
         float ax = 0, ay = 0, az = 0;
         float gx = 0, gy = 0, gz = 0;
         float mx = 0, my = 0, mz = 0;
         AHRS.MahonyAHRS AHRSFilter = new AHRS.MahonyAHRS(0.005f,15.0f,0.0f);
         private BufferedGraphics g_buff;
-        Quaternion quat;
+        Quaternion quat, quat_orig, quat_trans;
 
         private class mag
         {
@@ -39,6 +39,10 @@ namespace screwDriverOrientation
                     mag_min[i] = 65535;
                     mag_offsets[i] = 0;
                     mag_coefs[i] = 1;
+                }
+                for (int i = 0; i < progress_low_pass_sample_nb; i++)
+                {
+                    low_pass_progress_bar[i] = 0;
                 }
             }
 
@@ -95,10 +99,9 @@ namespace screwDriverOrientation
 
             public int get_value_progress_bar_calib ()
             {
-                double norm;
-                int pgValue;
-                norm = get_norm(mag_values_corr);
-                pgValue = (int)(100 - (Math.Ceiling(Math.Abs(1 - norm)) * 10.0f));
+                
+                double norm = get_norm(mag_values_corr);
+                int pgValue = (int)(100 - (Math.Ceiling(Math.Abs(1 - norm) * 100.0f)));
                 if (pgValue < 0)
                     pgValue = 0;
 
@@ -125,7 +128,10 @@ namespace screwDriverOrientation
             BufferedGraphicsContext buff_context = BufferedGraphicsManager.Current;
             Rectangle disp_area = new Rectangle(0, 0, orientationPictureBox.Width, orientationPictureBox.Height);
             g_buff = buff_context.Allocate(orientationPictureBox.CreateGraphics(), disp_area);
-            g_buff.Graphics.Clear(Color.White);
+            g_buff.Graphics.TranslateTransform(orientationPictureBox.Width / 2, orientationPictureBox.Height / 2);
+            g_buff.Graphics.Clear(Color.LightGray);
+
+            quat_trans = new Quaternion(0, 0, 0, 1);
         }
 
         private void refresh_serial_combobox()
@@ -143,18 +149,12 @@ namespace screwDriverOrientation
             }
         }
 
-        private void set_zeros_YPR()
+        private void set_zeros_orientation()
         {
-            // Set origin
-            yawOrigin = 0;
-            pitchOrigin = 0;
-            rollOrigin = 0;
             yaw = 0;
             pitch = 0;
             roll = 0;
-            yawOriginLabel.Text = yawOrigin.ToString("000.0°");
-            pitchOriginLabel.Text = pitchOrigin.ToString("000.0°");
-            rollOriginLabel.Text = rollOrigin.ToString("000.0°");
+            quat_orig = new Quaternion(0, 0, 0, 1);
         }
 
         private void print_default_YPR_disp()
@@ -162,9 +162,6 @@ namespace screwDriverOrientation
             yawLabel.Text = " ---.-°";
             pitchLabel.Text = " ---.-°";
             rollLabel.Text = " ---.-°";
-            yawOriginLabel.Text = " ---.-°";
-            pitchOriginLabel.Text = " ---.-°";
-            rollOriginLabel.Text = " ---.-°";
             calibProgress.Value = 0;
         }
 
@@ -174,9 +171,9 @@ namespace screwDriverOrientation
             pitch = 0;
             roll = 0;
 
-            yaw = (float)Math.Atan2(2.0 * (q.Y * q.Z + q.W * q.X), q.W * q.W - q.X * q.X - q.Y * q.Y + q.Z * q.Z);
+            roll = (float)Math.Atan2(2.0 * (q.Y * q.Z + q.W * q.X), q.W * q.W - q.X * q.X - q.Y * q.Y + q.Z * q.Z);
             pitch = (float)Math.Asin(-2.0 * (q.X * q.Z - q.W * q.Y));
-            roll = (float)Math.Atan2(2.0 * (q.X * q.Y + q.W * q.Z), q.W * q.W + q.X * q.X - q.Y * q.Y - q.Z * q.Z);
+            yaw = (float)Math.Atan2(2.0 * (q.X * q.Y + q.W * q.Z), q.W * q.W + q.X * q.X - q.Y * q.Y - q.Z * q.Z);
 
             yaw *= 180.0f / (float)Math.PI;
             pitch *= 180.0f / (float)Math.PI;
@@ -187,25 +184,15 @@ namespace screwDriverOrientation
         {
             if (!float.IsNaN(mx) && !float.IsNaN(my) && !float.IsNaN(mz))
             {
-                //AHRSFilter.Update(deg2rad(gx), deg2rad(gy), deg2rad(gz), 1,0,0);
                 AHRSFilter.Update(deg2rad(gx), deg2rad(gy), deg2rad(gz), ax, ay, az, mx, my, mz);
                 float[] q = AHRSFilter.Quaternion;
                 quat = new Quaternion(q[1], q[2], q[3], q[0]);
-                quat = Quaternion.Normalize(quat);
 
-                // Console.WriteLine(q[0].ToString() + " " + q[1].ToString() + " " + q[2].ToString() + " " + q[3].ToString());
+                // Apply origin offset
+                Quaternion delta_q = quat * Quaternion.Inverse(quat_orig);
+                quat_trans = Quaternion.Inverse(quat_orig) * delta_q * quat_orig;
 
-                // quat = Quaternion.Normalize(quat);
-                // quat_rel = Quaternion.Inverse(prev_quat) * quat;
-                // quat_rel = Quaternion.Multiply(Quaternion.Normalize(quat_rel),0.00001f) ;
-                // quat_rel = Quaternion.Lerp(quat, prev_quat, 0.5f);
-                
-                QuatToEuler(quat, ref yaw, ref pitch, ref roll);
-
-                //yaw = (float)Math.Atan2(2.0f * (q[1] * q[2] + q[0] * q[3]), q[0] * q[0] + q[1] * q[1] - q[2] * q[2] - q[3] * q[3]);
-                //pitch = -(float)Math.Asin(2.0f * (q[1] * q[3] - q[0] * q[2]));
-                //roll = (float)Math.Atan2(2.0f * (q[0] * q[1] + q[2] * q[3]), q[0] * q[0] - q[1] * q[1] - q[2] * q[2] + q[3] * q[3]);
-
+                QuatToEuler(quat_trans, ref yaw, ref pitch, ref roll);
             }
         }
 
@@ -225,12 +212,16 @@ namespace screwDriverOrientation
                     orientationGB.Enabled = true;
                     refreshButton.Enabled = false;
                     refreshTimer.Enabled = true;
-                    originGB.Enabled = true;
+                    configGB.Enabled = true;
                     calibGB.Enabled = true;
                     calibProgress.Visible = true;
                     calibLabel.Visible = false;
-                    set_zeros_YPR();
+                    displayGB.Enabled = true;
+                    filterTimer.Enabled = true;
+                    set_zeros_orientation();
                     magnetometer.reset_mag_values();
+                    orientationPictureBox.Enabled = true;
+                    g_buff.Graphics.Clear(Color.White);
                 }
                 catch
                 {
@@ -249,10 +240,13 @@ namespace screwDriverOrientation
             connectButton.Enabled = true;
             refreshTimer.Enabled = false;
             refreshButton.Enabled = true;
-            originGB.Enabled = false;
+            configGB.Enabled = false;
             calibGB.Enabled = false;
             calibProgress.Visible = false;
             calibLabel.Visible = false;
+            displayGB.Enabled = false;
+            filterTimer.Enabled = false;
+            orientationPictureBox.Enabled = false;
             print_default_YPR_disp();
         }
 
@@ -270,6 +264,24 @@ namespace screwDriverOrientation
             }
         }
 
+        private void resetCalButton_Click(object sender, EventArgs e)
+        {
+            magnetometer.reset_mag_values();
+        }
+
+        private void cuboidCB_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cuboidCB.Checked)
+            {
+                fillCB.Enabled = true;
+            }
+            else
+            {
+                fillCB.Enabled = false;
+                fillCB.Checked = false;
+            }
+        }
+
         private void refreshButton_Click(object sender, EventArgs e)
         {
             refresh_serial_combobox();
@@ -277,12 +289,10 @@ namespace screwDriverOrientation
 
         private void setOriginButton_Click(object sender, EventArgs e)
         {
-            yawOrigin = yaw;
-            pitchOrigin = pitch;
-            rollOrigin = roll;
-            yawOriginLabel.Text = yawOrigin.ToString("000.0°");
-            pitchOriginLabel.Text = pitchOrigin.ToString("000.0°");
-            rollOriginLabel.Text = rollOrigin.ToString("000.0°");
+            quat_orig.X = quat.X;
+            quat_orig.Y = quat.Y;
+            quat_orig.Z = quat.Z;
+            quat_orig.W = quat.W;
         }
 
         private void serialPortObj_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
@@ -296,7 +306,7 @@ namespace screwDriverOrientation
                     ax = -float.Parse(datas[1]);
                     ay = -float.Parse(datas[2]);
                     az = float.Parse(datas[3]);
-                    Console.WriteLine("A " + ax.ToString() + " " + ay.ToString() + " " + az.ToString());
+                    //Console.WriteLine("A " + ax.ToString() + " " + ay.ToString() + " " + az.ToString());
                 }
                 else if (datas[0] == "GYRO")
                 {
@@ -316,7 +326,7 @@ namespace screwDriverOrientation
                     mx = magnetometer.mag_values_corr[0];
                     my = magnetometer.mag_values_corr[1];
                     mz = magnetometer.mag_values_corr[2];
-                    Console.WriteLine("MC " + mx.ToString() + " " + my.ToString() + " " + mz.ToString());
+                    //Console.WriteLine("MC " + mx.ToString() + " " + my.ToString() + " " + mz.ToString());
                 }
             }
             catch
@@ -348,12 +358,9 @@ namespace screwDriverOrientation
 
         private void timerRefresh_Tick(object sender, EventArgs e)
         {
-            float yawTmp = diffAngle(yaw, yawOrigin);
-            float pitchTmp = diffAngle(pitch,pitchOrigin);
-            float rollTmp = diffAngle(roll,rollOrigin);
-            yawLabel.Text = yawTmp.ToString("000.0°");
-            pitchLabel.Text = pitchTmp.ToString("000.0°");
-            rollLabel.Text = rollTmp.ToString("000.0°");
+            yawLabel.Text = yaw.ToString("000.0°");
+            pitchLabel.Text = pitch.ToString("000.0°");
+            rollLabel.Text = roll.ToString("000.0°");
 
             calibProgress.Value = (int)magnetometer.get_value_progress_bar_calib();
             draw_orientation(yaw, pitch, roll);
@@ -361,183 +368,181 @@ namespace screwDriverOrientation
 
         private void draw_orientation(float yaw, float pitch, float roll)
         {
-            float yaw_rad = (yaw - yawOrigin) * (float)Math.PI / 180.0f;
-            float pitch_rad = (pitch - pitchOrigin) * (float)Math.PI / 180.0f;
-            float roll_rad = (roll - rollOrigin) * (float)Math.PI / 180.0f;
-
-            int width = orientationPictureBox.Width;
-            int height = orientationPictureBox.Height;
-
-            float origX = width / 2;
-            float origY = height / 2;
-
             // Draw Cube
-            float h = 20, w = 100, l = 50;
+            if (cuboidCB.Checked)
+            {
+                float h = 15, w = 75, l = 35;
 
-            float[] pc1 = { l / 2, w / 2, h / 2 };
-            float[] pc2 = { l / 2, w / 2, -h / 2 };
-            float[] pc3 = { l / 2, -w / 2, h / 2 };
-            float[] pc4 = { l / 2, -w / 2, -h / 2 };
-            float[] pc5 = { -l / 2, w / 2, h / 2 };
-            float[] pc6 = { -l / 2, w / 2, -h / 2 };
-            float[] pc7 = { -l / 2, -w / 2, h / 2 };
-            float[] pc8 = { -l / 2, -w / 2, -h / 2 };
+                float[] pc1 = { l, 0, 0 };
+                float[] pc2 = { l, 0, -h };
+                float[] pc3 = { l, w, 0 };
+                float[] pc4 = { l, w, -h };
+                float[] pc5 = { 0, 0, 0 };
+                float[] pc6 = { 0, 0, -h };
+                float[] pc7 = { 0, w, 0 };
+                float[] pc8 = { 0, w, -h };
 
-            rotate_matrix(pc1, yaw_rad, pitch_rad, roll_rad);
-            rotate_matrix(pc2, yaw_rad, pitch_rad, roll_rad);
-            rotate_matrix(pc3, yaw_rad, pitch_rad, roll_rad);
-            rotate_matrix(pc4, yaw_rad, pitch_rad, roll_rad);
-            rotate_matrix(pc5, yaw_rad, pitch_rad, roll_rad);
-            rotate_matrix(pc6, yaw_rad, pitch_rad, roll_rad);
-            rotate_matrix(pc7, yaw_rad, pitch_rad, roll_rad);
-            rotate_matrix(pc8, yaw_rad, pitch_rad, roll_rad);
+                rotate_matrix(pc1);
+                rotate_matrix(pc2);
+                rotate_matrix(pc3);
+                rotate_matrix(pc4);
+                rotate_matrix(pc5);
+                rotate_matrix(pc6);
+                rotate_matrix(pc7);
+                rotate_matrix(pc8);
 
-            Point vert1 = new Point((int)(pc1[1] + origX), (int)(pc1[2] + origY));
-            Point vert2 = new Point((int)(pc2[1] + origX), (int)(pc2[2] + origY));
-            Point vert3 = new Point((int)(pc3[1] + origX), (int)(pc3[2] + origY));
-            Point vert4 = new Point((int)(pc4[1] + origX), (int)(pc4[2] + origY));
-            Point vert5 = new Point((int)(pc5[1] + origX), (int)(pc5[2] + origY));
-            Point vert6 = new Point((int)(pc6[1] + origX), (int)(pc6[2] + origY));
-            Point vert7 = new Point((int)(pc7[1] + origX), (int)(pc7[2] + origY));
-            Point vert8 = new Point((int)(pc8[1] + origX), (int)(pc8[2] + origY));
+                Point vert1 = new Point((int)(pc1[1]), (int)(pc1[2]));
+                Point vert2 = new Point((int)(pc2[1]), (int)(pc2[2]));
+                Point vert3 = new Point((int)(pc3[1]), (int)(pc3[2]));
+                Point vert4 = new Point((int)(pc4[1]), (int)(pc4[2]));
+                Point vert5 = new Point((int)(pc5[1]), (int)(pc5[2]));
+                Point vert6 = new Point((int)(pc6[1]), (int)(pc6[2]));
+                Point vert7 = new Point((int)(pc7[1]), (int)(pc7[2]));
+                Point vert8 = new Point((int)(pc8[1]), (int)(pc8[2]));
 
-            Point[] edge1 = { vert1, vert2 };
-            Point[] edge2 = { vert1, vert3 };
-            Point[] edge3 = { vert3, vert4 };
-            Point[] edge4 = { vert4, vert2 };
-            Point[] edge5 = { vert1, vert5 };
-            Point[] edge6 = { vert3, vert7 };
-            Point[] edge7 = { vert4, vert8 };
-            Point[] edge8 = { vert2, vert6 };
-            Point[] edge9 = { vert5, vert6 };
-            Point[] edge10 = { vert5, vert7 };
-            Point[] edge11 = { vert7, vert8 };
-            Point[] edge12 = { vert6, vert8 };
+                Point[] edge1 = { vert1, vert2 };
+                Point[] edge2 = { vert1, vert3 };
+                Point[] edge3 = { vert3, vert4 };
+                Point[] edge4 = { vert4, vert2 };
+                Point[] edge5 = { vert1, vert5 };
+                Point[] edge6 = { vert3, vert7 };
+                Point[] edge7 = { vert4, vert8 };
+                Point[] edge8 = { vert2, vert6 };
+                Point[] edge9 = { vert5, vert6 };
+                Point[] edge10 = { vert5, vert7 };
+                Point[] edge11 = { vert7, vert8 };
+                Point[] edge12 = { vert6, vert8 };
 
-            Pen p_edge = new Pen(Color.Red, 3);
-            g_buff.Graphics.DrawLine(p_edge, edge1[0], edge1[1]);
-            g_buff.Graphics.DrawLine(p_edge, edge2[0], edge2[1]);
-            g_buff.Graphics.DrawLine(p_edge, edge3[0], edge3[1]);
-            g_buff.Graphics.DrawLine(p_edge, edge4[0], edge4[1]);
-            g_buff.Graphics.DrawLine(p_edge, edge5[0], edge5[1]);
-            g_buff.Graphics.DrawLine(p_edge, edge6[0], edge6[1]);
-            g_buff.Graphics.DrawLine(p_edge, edge7[0], edge7[1]);
-            g_buff.Graphics.DrawLine(p_edge, edge8[0], edge8[1]);
-            g_buff.Graphics.DrawLine(p_edge, edge9[0], edge9[1]);
-            g_buff.Graphics.DrawLine(p_edge, edge10[0], edge10[1]);
-            g_buff.Graphics.DrawLine(p_edge, edge11[0], edge11[1]);
-            g_buff.Graphics.DrawLine(p_edge, edge12[0], edge12[1]);
-
-            Point[] sidef = { vert1, vert2, vert4, vert3 };
-            Point[] sideb = { vert5, vert6, vert8, vert7 };
-            Point[] sidel = { vert1, vert2, vert6, vert5 };
-            Point[] sider = { vert3, vert4, vert8, vert7 };
-            Point[] sideu = { vert1, vert3, vert7, vert5 };
-            Point[] sided = { vert2, vert4, vert8, vert6 };
-
-            SolidBrush b;
-            b = new SolidBrush(Color.FromArgb(100, Color.Blue));
-            g_buff.Graphics.FillPolygon(b, sidef);
-            g_buff.Graphics.FillPolygon(b, sideb);
-            g_buff.Graphics.FillPolygon(b, sidel);
-            g_buff.Graphics.FillPolygon(b, sider);
-            g_buff.Graphics.FillPolygon(b, sideu);
-            g_buff.Graphics.FillPolygon(b, sided);
-
-            // Test
-            Vector3 v_mag = new Vector3(mx, my, mz);
-            v_mag = Vector3.Multiply(v_mag, 80.0f);
-            v_mag = Vector3.Transform(v_mag, (quat));
-            if (v_mag.X < 0)
-                g_buff.Graphics.DrawLine(new Pen(Color.LightBlue, 5), origX, origY, origX + v_mag.Y, origY + v_mag.Z);
-            else
-                g_buff.Graphics.DrawLine(new Pen(Color.DarkBlue, 5), origX, origY, origX + v_mag.Y, origY + v_mag.Z);
-
-            Vector3 v_acc = new Vector3(ax, ay, az);
-            v_acc = Vector3.Multiply(v_acc, 80.0f);
-            v_acc = Vector3.Transform(v_acc, (quat));
-            if (v_acc.X < 0)
-                g_buff.Graphics.DrawLine(new Pen(Color.Yellow, 5), origX, origY, origX + v_acc.Y, origY + v_acc.Z);
-            else
-                g_buff.Graphics.DrawLine(new Pen(Color.Gold, 5), origX, origY, origX + v_acc.Y, origY + v_acc.Z);
+                Pen p_edge = new Pen(Color.Black, 3);
+                g_buff.Graphics.DrawLine(p_edge, edge1[0], edge1[1]);
+                g_buff.Graphics.DrawLine(p_edge, edge2[0], edge2[1]);
+                g_buff.Graphics.DrawLine(p_edge, edge3[0], edge3[1]);
+                g_buff.Graphics.DrawLine(p_edge, edge4[0], edge4[1]);
+                g_buff.Graphics.DrawLine(p_edge, edge5[0], edge5[1]);
+                g_buff.Graphics.DrawLine(p_edge, edge6[0], edge6[1]);
+                g_buff.Graphics.DrawLine(p_edge, edge7[0], edge7[1]);
+                g_buff.Graphics.DrawLine(p_edge, edge8[0], edge8[1]);
+                g_buff.Graphics.DrawLine(p_edge, edge9[0], edge9[1]);
+                g_buff.Graphics.DrawLine(p_edge, edge10[0], edge10[1]);
+                g_buff.Graphics.DrawLine(p_edge, edge11[0], edge11[1]);
+                g_buff.Graphics.DrawLine(p_edge, edge12[0], edge12[1]);
+                
+                if (fillCB.Checked)
+                {
+                    SolidBrush brush;
+                    brush = new SolidBrush(Color.FromArgb(100, Color.Yellow));
+                    Point[] down_side = { vert1, vert3, vert7, vert5 };
+                    Point[] x_side = { vert1, vert2, vert6, vert5 };
+                    Point[] y_side = { vert5, vert6, vert8, vert7 };
+                    g_buff.Graphics.FillPolygon(brush, down_side);
+                    g_buff.Graphics.FillPolygon(brush, x_side);
+                    g_buff.Graphics.FillPolygon(brush, y_side);
+                }
+            }
 
             // Compass
-            float unit_coef = 100;
+            float norm = 120;
 
-            g_buff.Graphics.FillEllipse(Brushes.Black, origX - 5, origY - 5, 10, 10);
+            float[] p1 = { norm, 0, 0 };
+            float[] p2 = { 0, norm, 0 };
+            float[] p3 = { 0, 0, -norm };
 
-            float[] p1 = { unit_coef, 0, 0 };
-            float[] p2 = { 0, unit_coef, 0 };
-            float[] p3 = { 0, 0, -unit_coef };
+            rotate_matrix(p1);
+            rotate_matrix(p2);
+            rotate_matrix(p3);
 
-            rotate_matrix(p1, yaw_rad, pitch_rad, roll_rad);
-            rotate_matrix(p2, yaw_rad, pitch_rad, roll_rad);
-            rotate_matrix(p3, yaw_rad, pitch_rad, roll_rad);
-
-            Pen tmp_pen;
-            Color tmp_color;
-            float lw;
-
-            tmp_color = Color.Red;
-            lw = 6 - 4 * ((unit_coef - p1[0]) / (2 * unit_coef));
-            tmp_pen = new Pen(tmp_color, lw);
-            if (Math.Sqrt(Math.Pow(p1[1],2) + Math.Pow(p1[2], 2)) > 20)
-                tmp_pen.CustomEndCap = new System.Drawing.Drawing2D.AdjustableArrowCap(lw * 0.75f, lw * 0.75f, true);
-            g_buff.Graphics.DrawLine(tmp_pen, origX, origY, origX + p1[1], origY + p1[2]);
-
-            tmp_color = Color.Black;
-            lw = 6 - 4 * ((unit_coef - p2[0]) / (2 * unit_coef));
-            tmp_pen = new Pen(tmp_color, lw);
-            if (Math.Sqrt(Math.Pow(p2[1], 2) + Math.Pow(p2[2], 2)) > 20)
-                tmp_pen.CustomEndCap = new System.Drawing.Drawing2D.AdjustableArrowCap(lw * 0.75f, lw * 0.75f, true);
-            g_buff.Graphics.DrawLine(tmp_pen, origX, origY, origX + p2[1], origY + p2[2]);
-
-            tmp_color = Color.Green;
-            lw = 6 - 4 * ((unit_coef - p3[0]) / (2 * unit_coef));
-            tmp_pen = new Pen(tmp_color, lw);
-            if (Math.Sqrt(Math.Pow(p3[1], 2) + Math.Pow(p3[2], 2)) > 20)
-                tmp_pen.CustomEndCap = new System.Drawing.Drawing2D.AdjustableArrowCap(lw * 0.75f, lw * 0.75f, true);
-            g_buff.Graphics.DrawLine(tmp_pen, origX, origY, origX + p3[1], origY + p3[2]);
+            int[] ind = { 0, 1, 2, 3 };
+            float[] val = { 0, p1[0], p2[0], p3[0] };
+            for (int i=0; i<3; i++)
+            {
+                if (val[i] > val[i + 1])
+                {
+                    float tmp_val;
+                    tmp_val = val[i];
+                    val[i] = val[i + 1];
+                    val[i + 1] = tmp_val;
+                    int tmp_ind;
+                    tmp_ind = ind[i];
+                    ind[i] = ind[i + 1];
+                    ind[i + 1] = tmp_ind;
+                    i = 0;
+                }
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                if (ind[i] == 0)
+                    disp_compass(0, new float[4]);
+                if (ind[i] == 1)
+                    disp_compass(1, p1);
+                if (ind[i] == 2)
+                    disp_compass(2, p2);
+                if (ind[i] == 3)
+                    disp_compass(3, p3);
+            }
 
             g_buff.Render();
             g_buff.Graphics.Clear(Color.White);
         }
 
-        private void rotate_matrix (float[] pts, float yaw, float pitch, float roll)
+        private void disp_compass(int axis_nb, float[] p)
+        {
+            float arrow_width = 7;
+
+            if (axis_nb == 0)
+            {
+                g_buff.Graphics.FillEllipse(Brushes.Black, -arrow_width, -arrow_width, 2*arrow_width, 2*arrow_width);
+            }
+
+            if (xaxisCB.Checked && axis_nb == 1)
+            {
+                Pen tmp_pen = new Pen(Color.Red, arrow_width);
+                if (arrowsCB.Checked)
+                    tmp_pen.CustomEndCap = new System.Drawing.Drawing2D.AdjustableArrowCap(arrow_width * 0.30f, arrow_width * 0.30f, true);
+                else
+                {
+                    Brush tmp_brush = new SolidBrush(Color.Red);
+                    g_buff.Graphics.FillEllipse(tmp_brush, p[1] - arrow_width / 2, p[2] - arrow_width / 2, arrow_width, arrow_width);
+                    g_buff.Graphics.FillEllipse(tmp_brush, 0 - arrow_width / 2, 0 - arrow_width / 2, arrow_width, arrow_width);
+                }
+                g_buff.Graphics.DrawLine(tmp_pen, 0, 0, p[1], p[2]);
+            }
+
+            if (yaxisCB.Checked && axis_nb == 2)
+            {
+                Pen tmp_pen = new Pen(Color.Blue, arrow_width);
+                if (arrowsCB.Checked)
+                    tmp_pen.CustomEndCap = new System.Drawing.Drawing2D.AdjustableArrowCap(arrow_width * 0.30f, arrow_width * 0.30f, true);
+                else
+                {
+                    Brush tmp_brush = new SolidBrush(Color.Blue);
+                    g_buff.Graphics.FillEllipse(tmp_brush, p[1] - arrow_width / 2, p[2] - arrow_width / 2, arrow_width, arrow_width);
+                    g_buff.Graphics.FillEllipse(tmp_brush, 0 - arrow_width / 2, 0 - arrow_width / 2, arrow_width, arrow_width);
+                }
+                g_buff.Graphics.DrawLine(tmp_pen, 0, 0, p[1], p[2]);
+            }
+
+            if (zaxisCB.Checked && axis_nb == 3)
+            {
+                Pen tmp_pen = new Pen(Color.LimeGreen, arrow_width);
+                if (arrowsCB.Checked)
+                    tmp_pen.CustomEndCap = new System.Drawing.Drawing2D.AdjustableArrowCap(arrow_width * 0.30f, arrow_width * 0.30f, true);
+                else
+                {
+                    Brush tmp_brush = new SolidBrush(Color.LimeGreen);
+                    g_buff.Graphics.FillEllipse(tmp_brush, p[1] - arrow_width / 2, p[2] - arrow_width / 2, arrow_width, arrow_width);
+                    g_buff.Graphics.FillEllipse(tmp_brush, 0 - arrow_width / 2, 0 - arrow_width / 2, arrow_width, arrow_width);
+                }
+                g_buff.Graphics.DrawLine(tmp_pen, 0, 0, p[1], p[2]);
+            }
+        }
+
+        private void rotate_matrix (float[] pts)
         {
             Vector3 vec = new Vector3(pts[0], pts[1], pts[2]);
-            vec = Vector3.Transform(vec, quat);
+            vec = Vector3.Transform(vec, quat_trans);
             pts[0] = vec.X;
             pts[1] = vec.Y;
             pts[2] = vec.Z;
-            //rotate_vect3D(0, roll, pts);
-            //rotate_vect3D(1, pitch, pts);
-            //rotate_vect3D(2, yaw, pts);
-        }
-
-        private void rotate_vect3D (int axis, float angle, float[] vect)
-        {
-            float x = vect[0];
-            float y = vect[1];
-            float z = vect[2];
-            if (axis == 0)
-            {
-                vect[0] = x;
-                vect[1] = y * (float)Math.Cos(angle) + z * (float)Math.Sin(angle);
-                vect[2] = -y * (float)Math.Sin(angle) + z * (float)Math.Cos(angle);
-            }
-            else if (axis == 1)
-            {
-                vect[0] = x * (float)Math.Cos(angle) - z * (float)Math.Sin(angle);
-                vect[1] = y;
-                vect[2] = x * (float)Math.Sin(angle) + z * (float)Math.Cos(angle);
-            }
-            else if (axis == 2)
-            {
-                vect[0] = x * (float)Math.Cos(angle) + y * (float)Math.Sin(angle);
-                vect[1] = -x * (float)Math.Sin(angle) + y * (float)Math.Cos(angle);
-                vect[2] = z;
-            }
         }
     }
 }

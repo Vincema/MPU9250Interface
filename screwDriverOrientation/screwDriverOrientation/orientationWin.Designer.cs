@@ -29,19 +29,15 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(orientationWin));
             this.SerialGB = new System.Windows.Forms.GroupBox();
             this.serialPortCombo = new System.Windows.Forms.ComboBox();
             this.refreshButton = new System.Windows.Forms.Button();
             this.disconnectButton = new System.Windows.Forms.Button();
             this.connectButton = new System.Windows.Forms.Button();
-            this.originGB = new System.Windows.Forms.GroupBox();
-            this.rollOriginGB = new System.Windows.Forms.GroupBox();
-            this.rollOriginLabel = new System.Windows.Forms.Label();
+            this.configGB = new System.Windows.Forms.GroupBox();
+            this.resetCalButton = new System.Windows.Forms.Button();
             this.setOriginButton = new System.Windows.Forms.Button();
-            this.yawOriginGB = new System.Windows.Forms.GroupBox();
-            this.yawOriginLabel = new System.Windows.Forms.Label();
-            this.pitchOriginGB = new System.Windows.Forms.GroupBox();
-            this.pitchOriginLabel = new System.Windows.Forms.Label();
             this.orientationGB = new System.Windows.Forms.GroupBox();
             this.rollGB = new System.Windows.Forms.GroupBox();
             this.rollLabel = new System.Windows.Forms.Label();
@@ -56,17 +52,24 @@
             this.calibLabel = new System.Windows.Forms.Label();
             this.filterTimer = new System.Windows.Forms.Timer(this.components);
             this.orientationPictureBox = new System.Windows.Forms.PictureBox();
+            this.displayGB = new System.Windows.Forms.GroupBox();
+            this.arrowsCB = new System.Windows.Forms.CheckBox();
+            this.fillCB = new System.Windows.Forms.CheckBox();
+            this.cuboidCB = new System.Windows.Forms.CheckBox();
+            this.zaxisCB = new System.Windows.Forms.CheckBox();
+            this.yaxisCB = new System.Windows.Forms.CheckBox();
+            this.xaxisCB = new System.Windows.Forms.CheckBox();
+            this.cartesianCoordPict = new System.Windows.Forms.PictureBox();
             this.SerialGB.SuspendLayout();
-            this.originGB.SuspendLayout();
-            this.rollOriginGB.SuspendLayout();
-            this.yawOriginGB.SuspendLayout();
-            this.pitchOriginGB.SuspendLayout();
+            this.configGB.SuspendLayout();
             this.orientationGB.SuspendLayout();
             this.rollGB.SuspendLayout();
             this.pitchGB.SuspendLayout();
             this.yawGB.SuspendLayout();
             this.calibGB.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.orientationPictureBox)).BeginInit();
+            this.displayGB.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.cartesianCoordPict)).BeginInit();
             this.SuspendLayout();
             // 
             // SerialGB
@@ -128,100 +131,40 @@
             this.connectButton.UseVisualStyleBackColor = true;
             this.connectButton.Click += new System.EventHandler(this.connectButton_Click);
             // 
-            // originGB
+            // configGB
             // 
-            this.originGB.Controls.Add(this.rollOriginGB);
-            this.originGB.Controls.Add(this.setOriginButton);
-            this.originGB.Controls.Add(this.yawOriginGB);
-            this.originGB.Controls.Add(this.pitchOriginGB);
-            this.originGB.Enabled = false;
-            this.originGB.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.originGB.Location = new System.Drawing.Point(237, 12);
-            this.originGB.Name = "originGB";
-            this.originGB.Size = new System.Drawing.Size(294, 119);
-            this.originGB.TabIndex = 1;
-            this.originGB.TabStop = false;
-            this.originGB.Text = "Origin";
+            this.configGB.Controls.Add(this.resetCalButton);
+            this.configGB.Controls.Add(this.setOriginButton);
+            this.configGB.Enabled = false;
+            this.configGB.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.configGB.Location = new System.Drawing.Point(237, 12);
+            this.configGB.Name = "configGB";
+            this.configGB.Size = new System.Drawing.Size(129, 119);
+            this.configGB.TabIndex = 1;
+            this.configGB.TabStop = false;
+            this.configGB.Text = "Configuration";
             // 
-            // rollOriginGB
+            // resetCalButton
             // 
-            this.rollOriginGB.Controls.Add(this.rollOriginLabel);
-            this.rollOriginGB.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.rollOriginGB.Location = new System.Drawing.Point(204, 54);
-            this.rollOriginGB.Name = "rollOriginGB";
-            this.rollOriginGB.Size = new System.Drawing.Size(84, 59);
-            this.rollOriginGB.TabIndex = 8;
-            this.rollOriginGB.TabStop = false;
-            this.rollOriginGB.Text = "Roll";
-            // 
-            // rollOriginLabel
-            // 
-            this.rollOriginLabel.BackColor = System.Drawing.Color.White;
-            this.rollOriginLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.rollOriginLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rollOriginLabel.Location = new System.Drawing.Point(8, 22);
-            this.rollOriginLabel.Name = "rollOriginLabel";
-            this.rollOriginLabel.Size = new System.Drawing.Size(61, 29);
-            this.rollOriginLabel.TabIndex = 4;
-            this.rollOriginLabel.Text = " ---.-°";
-            this.rollOriginLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.resetCalButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.resetCalButton.Location = new System.Drawing.Point(13, 74);
+            this.resetCalButton.Name = "resetCalButton";
+            this.resetCalButton.Size = new System.Drawing.Size(103, 29);
+            this.resetCalButton.TabIndex = 4;
+            this.resetCalButton.Text = "Reset calibration";
+            this.resetCalButton.UseVisualStyleBackColor = true;
+            this.resetCalButton.Click += new System.EventHandler(this.resetCalButton_Click);
             // 
             // setOriginButton
             // 
             this.setOriginButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.setOriginButton.Location = new System.Drawing.Point(67, 23);
+            this.setOriginButton.Location = new System.Drawing.Point(13, 34);
             this.setOriginButton.Name = "setOriginButton";
-            this.setOriginButton.Size = new System.Drawing.Size(147, 29);
+            this.setOriginButton.Size = new System.Drawing.Size(103, 29);
             this.setOriginButton.TabIndex = 3;
             this.setOriginButton.Text = "Set origin";
             this.setOriginButton.UseVisualStyleBackColor = true;
             this.setOriginButton.Click += new System.EventHandler(this.setOriginButton_Click);
-            // 
-            // yawOriginGB
-            // 
-            this.yawOriginGB.Controls.Add(this.yawOriginLabel);
-            this.yawOriginGB.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.yawOriginGB.Location = new System.Drawing.Point(6, 54);
-            this.yawOriginGB.Name = "yawOriginGB";
-            this.yawOriginGB.Size = new System.Drawing.Size(84, 59);
-            this.yawOriginGB.TabIndex = 6;
-            this.yawOriginGB.TabStop = false;
-            this.yawOriginGB.Text = "Yaw";
-            // 
-            // yawOriginLabel
-            // 
-            this.yawOriginLabel.BackColor = System.Drawing.Color.White;
-            this.yawOriginLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.yawOriginLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.yawOriginLabel.Location = new System.Drawing.Point(6, 22);
-            this.yawOriginLabel.Name = "yawOriginLabel";
-            this.yawOriginLabel.Size = new System.Drawing.Size(61, 29);
-            this.yawOriginLabel.TabIndex = 4;
-            this.yawOriginLabel.Text = " ---.-°";
-            this.yawOriginLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // pitchOriginGB
-            // 
-            this.pitchOriginGB.Controls.Add(this.pitchOriginLabel);
-            this.pitchOriginGB.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
-            this.pitchOriginGB.Location = new System.Drawing.Point(105, 54);
-            this.pitchOriginGB.Name = "pitchOriginGB";
-            this.pitchOriginGB.Size = new System.Drawing.Size(84, 59);
-            this.pitchOriginGB.TabIndex = 7;
-            this.pitchOriginGB.TabStop = false;
-            this.pitchOriginGB.Text = "Pitch";
-            // 
-            // pitchOriginLabel
-            // 
-            this.pitchOriginLabel.BackColor = System.Drawing.Color.White;
-            this.pitchOriginLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pitchOriginLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.pitchOriginLabel.Location = new System.Drawing.Point(6, 22);
-            this.pitchOriginLabel.Name = "pitchOriginLabel";
-            this.pitchOriginLabel.Size = new System.Drawing.Size(61, 29);
-            this.pitchOriginLabel.TabIndex = 4;
-            this.pitchOriginLabel.Text = " ---.-°";
-            this.pitchOriginLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // orientationGB
             // 
@@ -358,36 +301,139 @@
             // 
             this.orientationPictureBox.BackColor = System.Drawing.SystemColors.Window;
             this.orientationPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.orientationPictureBox.Location = new System.Drawing.Point(537, 20);
+            this.orientationPictureBox.Location = new System.Drawing.Point(537, 12);
             this.orientationPictureBox.Name = "orientationPictureBox";
-            this.orientationPictureBox.Size = new System.Drawing.Size(343, 282);
+            this.orientationPictureBox.Size = new System.Drawing.Size(343, 290);
             this.orientationPictureBox.TabIndex = 4;
             this.orientationPictureBox.TabStop = false;
+            // 
+            // displayGB
+            // 
+            this.displayGB.Controls.Add(this.arrowsCB);
+            this.displayGB.Controls.Add(this.fillCB);
+            this.displayGB.Controls.Add(this.cuboidCB);
+            this.displayGB.Controls.Add(this.zaxisCB);
+            this.displayGB.Controls.Add(this.yaxisCB);
+            this.displayGB.Controls.Add(this.xaxisCB);
+            this.displayGB.Enabled = false;
+            this.displayGB.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.displayGB.Location = new System.Drawing.Point(381, 12);
+            this.displayGB.Name = "displayGB";
+            this.displayGB.Size = new System.Drawing.Size(150, 119);
+            this.displayGB.TabIndex = 5;
+            this.displayGB.TabStop = false;
+            this.displayGB.Text = "Display";
+            // 
+            // arrowsCB
+            // 
+            this.arrowsCB.Checked = true;
+            this.arrowsCB.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.arrowsCB.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.arrowsCB.Location = new System.Drawing.Point(78, 82);
+            this.arrowsCB.Name = "arrowsCB";
+            this.arrowsCB.Size = new System.Drawing.Size(70, 21);
+            this.arrowsCB.TabIndex = 5;
+            this.arrowsCB.Text = "Arrows";
+            this.arrowsCB.UseVisualStyleBackColor = true;
+            // 
+            // fillCB
+            // 
+            this.fillCB.Checked = true;
+            this.fillCB.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.fillCB.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.fillCB.Location = new System.Drawing.Point(78, 57);
+            this.fillCB.Name = "fillCB";
+            this.fillCB.Size = new System.Drawing.Size(70, 21);
+            this.fillCB.TabIndex = 4;
+            this.fillCB.Text = "Fill";
+            this.fillCB.UseVisualStyleBackColor = true;
+            // 
+            // cuboidCB
+            // 
+            this.cuboidCB.Checked = true;
+            this.cuboidCB.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cuboidCB.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.cuboidCB.Location = new System.Drawing.Point(78, 30);
+            this.cuboidCB.Name = "cuboidCB";
+            this.cuboidCB.Size = new System.Drawing.Size(70, 21);
+            this.cuboidCB.TabIndex = 3;
+            this.cuboidCB.Text = "Cuboid";
+            this.cuboidCB.UseVisualStyleBackColor = true;
+            this.cuboidCB.CheckedChanged += new System.EventHandler(this.cuboidCB_CheckedChanged);
+            // 
+            // zaxisCB
+            // 
+            this.zaxisCB.Checked = true;
+            this.zaxisCB.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.zaxisCB.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.zaxisCB.Location = new System.Drawing.Point(11, 84);
+            this.zaxisCB.Name = "zaxisCB";
+            this.zaxisCB.Size = new System.Drawing.Size(63, 21);
+            this.zaxisCB.TabIndex = 2;
+            this.zaxisCB.Text = "z-axis";
+            this.zaxisCB.UseVisualStyleBackColor = true;
+            // 
+            // yaxisCB
+            // 
+            this.yaxisCB.Checked = true;
+            this.yaxisCB.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.yaxisCB.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.yaxisCB.Location = new System.Drawing.Point(11, 57);
+            this.yaxisCB.Name = "yaxisCB";
+            this.yaxisCB.Size = new System.Drawing.Size(63, 21);
+            this.yaxisCB.TabIndex = 1;
+            this.yaxisCB.Text = "y-axis";
+            this.yaxisCB.UseVisualStyleBackColor = true;
+            // 
+            // xaxisCB
+            // 
+            this.xaxisCB.Checked = true;
+            this.xaxisCB.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.xaxisCB.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.xaxisCB.Location = new System.Drawing.Point(11, 30);
+            this.xaxisCB.Name = "xaxisCB";
+            this.xaxisCB.Size = new System.Drawing.Size(63, 21);
+            this.xaxisCB.TabIndex = 0;
+            this.xaxisCB.Text = "x-axis";
+            this.xaxisCB.UseVisualStyleBackColor = true;
+            // 
+            // cartesianCoordPict
+            // 
+            this.cartesianCoordPict.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("cartesianCoordPict.BackgroundImage")));
+            this.cartesianCoordPict.Image = ((System.Drawing.Image)(resources.GetObject("cartesianCoordPict.Image")));
+            this.cartesianCoordPict.InitialImage = null;
+            this.cartesianCoordPict.Location = new System.Drawing.Point(801, 226);
+            this.cartesianCoordPict.Name = "cartesianCoordPict";
+            this.cartesianCoordPict.Size = new System.Drawing.Size(78, 75);
+            this.cartesianCoordPict.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.cartesianCoordPict.TabIndex = 6;
+            this.cartesianCoordPict.TabStop = false;
             // 
             // orientationWin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(892, 312);
+            this.Controls.Add(this.cartesianCoordPict);
+            this.Controls.Add(this.displayGB);
             this.Controls.Add(this.orientationPictureBox);
             this.Controls.Add(this.orientationGB);
-            this.Controls.Add(this.originGB);
+            this.Controls.Add(this.configGB);
             this.Controls.Add(this.SerialGB);
             this.Controls.Add(this.calibGB);
             this.MaximizeBox = false;
             this.Name = "orientationWin";
             this.Text = "Screwdriver orientations";
             this.SerialGB.ResumeLayout(false);
-            this.originGB.ResumeLayout(false);
-            this.rollOriginGB.ResumeLayout(false);
-            this.yawOriginGB.ResumeLayout(false);
-            this.pitchOriginGB.ResumeLayout(false);
+            this.configGB.ResumeLayout(false);
             this.orientationGB.ResumeLayout(false);
             this.rollGB.ResumeLayout(false);
             this.pitchGB.ResumeLayout(false);
             this.yawGB.ResumeLayout(false);
             this.calibGB.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.orientationPictureBox)).EndInit();
+            this.displayGB.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.cartesianCoordPict)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -397,15 +443,11 @@
         private System.Windows.Forms.GroupBox SerialGB;
         private System.Windows.Forms.Button disconnectButton;
         private System.Windows.Forms.Button connectButton;
-        private System.Windows.Forms.GroupBox originGB;
+        private System.Windows.Forms.GroupBox configGB;
         private System.Windows.Forms.GroupBox orientationGB;
         private System.Windows.Forms.Button refreshButton;
         private System.Windows.Forms.ComboBox serialPortCombo;
         private System.Windows.Forms.Button setOriginButton;
-        private System.Windows.Forms.GroupBox rollOriginGB;
-        private System.Windows.Forms.Label rollOriginLabel;
-        private System.Windows.Forms.GroupBox yawOriginGB;
-        private System.Windows.Forms.Label yawOriginLabel;
         private System.Windows.Forms.GroupBox rollGB;
         private System.Windows.Forms.Label rollLabel;
         private System.Windows.Forms.GroupBox pitchGB;
@@ -414,13 +456,20 @@
         private System.Windows.Forms.Label yawLabel;
         private System.IO.Ports.SerialPort serialPortObj;
         private System.Windows.Forms.Timer refreshTimer;
-        private System.Windows.Forms.GroupBox pitchOriginGB;
-        private System.Windows.Forms.Label pitchOriginLabel;
         private System.Windows.Forms.GroupBox calibGB;
         private System.Windows.Forms.ProgressBar calibProgress;
         private System.Windows.Forms.Label calibLabel;
         private System.Windows.Forms.Timer filterTimer;
         private System.Windows.Forms.PictureBox orientationPictureBox;
+        private System.Windows.Forms.Button resetCalButton;
+        private System.Windows.Forms.GroupBox displayGB;
+        private System.Windows.Forms.CheckBox zaxisCB;
+        private System.Windows.Forms.CheckBox yaxisCB;
+        private System.Windows.Forms.CheckBox xaxisCB;
+        private System.Windows.Forms.CheckBox cuboidCB;
+        private System.Windows.Forms.CheckBox fillCB;
+        private System.Windows.Forms.PictureBox cartesianCoordPict;
+        private System.Windows.Forms.CheckBox arrowsCB;
     }
 }
 
