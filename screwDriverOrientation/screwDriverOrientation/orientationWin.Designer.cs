@@ -30,6 +30,10 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(orientationWin));
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
+            System.Windows.Forms.DataVisualization.Charting.Series series2 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.SerialGB = new System.Windows.Forms.GroupBox();
             this.serialPortCombo = new System.Windows.Forms.ComboBox();
             this.refreshButton = new System.Windows.Forms.Button();
@@ -60,6 +64,17 @@
             this.yaxisCB = new System.Windows.Forms.CheckBox();
             this.xaxisCB = new System.Windows.Forms.CheckBox();
             this.cartesianCoordPict = new System.Windows.Forms.PictureBox();
+            this.desiredOrientationGB = new System.Windows.Forms.GroupBox();
+            this.pitchDiffGB = new System.Windows.Forms.GroupBox();
+            this.pitchDiffLabel = new System.Windows.Forms.Label();
+            this.yawDiffGB = new System.Windows.Forms.GroupBox();
+            this.yawDiffLabel = new System.Windows.Forms.Label();
+            this.destinationButton = new System.Windows.Forms.Button();
+            this.desiredPitchGB = new System.Windows.Forms.GroupBox();
+            this.desiredPitchTB = new System.Windows.Forms.TextBox();
+            this.desiredYawGB = new System.Windows.Forms.GroupBox();
+            this.desiredYawTB = new System.Windows.Forms.TextBox();
+            this.polarChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.SerialGB.SuspendLayout();
             this.configGB.SuspendLayout();
             this.orientationGB.SuspendLayout();
@@ -70,6 +85,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.orientationPictureBox)).BeginInit();
             this.displayGB.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.cartesianCoordPict)).BeginInit();
+            this.desiredOrientationGB.SuspendLayout();
+            this.pitchDiffGB.SuspendLayout();
+            this.yawDiffGB.SuspendLayout();
+            this.desiredPitchGB.SuspendLayout();
+            this.desiredYawGB.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.polarChart)).BeginInit();
             this.SuspendLayout();
             // 
             // SerialGB
@@ -299,13 +320,14 @@
             // 
             // orientationPictureBox
             // 
-            this.orientationPictureBox.BackColor = System.Drawing.SystemColors.Window;
+            this.orientationPictureBox.BackColor = System.Drawing.Color.White;
             this.orientationPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.orientationPictureBox.Location = new System.Drawing.Point(537, 12);
             this.orientationPictureBox.Name = "orientationPictureBox";
             this.orientationPictureBox.Size = new System.Drawing.Size(343, 290);
             this.orientationPictureBox.TabIndex = 4;
             this.orientationPictureBox.TabStop = false;
+            this.orientationPictureBox.Visible = false;
             // 
             // displayGB
             // 
@@ -408,19 +430,208 @@
             this.cartesianCoordPict.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.cartesianCoordPict.TabIndex = 6;
             this.cartesianCoordPict.TabStop = false;
+            this.cartesianCoordPict.Visible = false;
+            // 
+            // desiredOrientationGB
+            // 
+            this.desiredOrientationGB.Controls.Add(this.pitchDiffGB);
+            this.desiredOrientationGB.Controls.Add(this.yawDiffGB);
+            this.desiredOrientationGB.Controls.Add(this.destinationButton);
+            this.desiredOrientationGB.Controls.Add(this.desiredPitchGB);
+            this.desiredOrientationGB.Controls.Add(this.desiredYawGB);
+            this.desiredOrientationGB.Enabled = false;
+            this.desiredOrientationGB.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.desiredOrientationGB.Location = new System.Drawing.Point(17, 308);
+            this.desiredOrientationGB.Name = "desiredOrientationGB";
+            this.desiredOrientationGB.Size = new System.Drawing.Size(863, 84);
+            this.desiredOrientationGB.TabIndex = 7;
+            this.desiredOrientationGB.TabStop = false;
+            this.desiredOrientationGB.Text = "Desired orientation";
+            // 
+            // pitchDiffGB
+            // 
+            this.pitchDiffGB.Controls.Add(this.pitchDiffLabel);
+            this.pitchDiffGB.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.pitchDiffGB.Location = new System.Drawing.Point(656, 23);
+            this.pitchDiffGB.Name = "pitchDiffGB";
+            this.pitchDiffGB.Size = new System.Drawing.Size(128, 55);
+            this.pitchDiffGB.TabIndex = 6;
+            this.pitchDiffGB.TabStop = false;
+            this.pitchDiffGB.Text = "Pitch difference";
+            // 
+            // pitchDiffLabel
+            // 
+            this.pitchDiffLabel.BackColor = System.Drawing.Color.White;
+            this.pitchDiffLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pitchDiffLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.pitchDiffLabel.ForeColor = System.Drawing.Color.Black;
+            this.pitchDiffLabel.Location = new System.Drawing.Point(17, 21);
+            this.pitchDiffLabel.Name = "pitchDiffLabel";
+            this.pitchDiffLabel.Size = new System.Drawing.Size(94, 31);
+            this.pitchDiffLabel.TabIndex = 7;
+            this.pitchDiffLabel.Text = " ---.-°";
+            this.pitchDiffLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // yawDiffGB
+            // 
+            this.yawDiffGB.Controls.Add(this.yawDiffLabel);
+            this.yawDiffGB.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.yawDiffGB.Location = new System.Drawing.Point(522, 23);
+            this.yawDiffGB.Name = "yawDiffGB";
+            this.yawDiffGB.Size = new System.Drawing.Size(128, 55);
+            this.yawDiffGB.TabIndex = 6;
+            this.yawDiffGB.TabStop = false;
+            this.yawDiffGB.Text = "Yaw difference";
+            // 
+            // yawDiffLabel
+            // 
+            this.yawDiffLabel.BackColor = System.Drawing.Color.White;
+            this.yawDiffLabel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.yawDiffLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.yawDiffLabel.ForeColor = System.Drawing.Color.Black;
+            this.yawDiffLabel.Location = new System.Drawing.Point(17, 21);
+            this.yawDiffLabel.Name = "yawDiffLabel";
+            this.yawDiffLabel.Size = new System.Drawing.Size(94, 31);
+            this.yawDiffLabel.TabIndex = 6;
+            this.yawDiffLabel.Text = " ---.-°";
+            this.yawDiffLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // destinationButton
+            // 
+            this.destinationButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.destinationButton.Location = new System.Drawing.Point(22, 39);
+            this.destinationButton.Name = "destinationButton";
+            this.destinationButton.Size = new System.Drawing.Size(143, 29);
+            this.destinationButton.TabIndex = 5;
+            this.destinationButton.Text = "Reach destination";
+            this.destinationButton.UseVisualStyleBackColor = true;
+            this.destinationButton.Click += new System.EventHandler(this.destinationButton_Click);
+            // 
+            // desiredPitchGB
+            // 
+            this.desiredPitchGB.Controls.Add(this.desiredPitchTB);
+            this.desiredPitchGB.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.desiredPitchGB.Location = new System.Drawing.Point(306, 20);
+            this.desiredPitchGB.Name = "desiredPitchGB";
+            this.desiredPitchGB.Size = new System.Drawing.Size(114, 58);
+            this.desiredPitchGB.TabIndex = 5;
+            this.desiredPitchGB.TabStop = false;
+            this.desiredPitchGB.Text = "Desired pitch";
+            // 
+            // desiredPitchTB
+            // 
+            this.desiredPitchTB.BackColor = System.Drawing.Color.Lime;
+            this.desiredPitchTB.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.desiredPitchTB.Location = new System.Drawing.Point(18, 23);
+            this.desiredPitchTB.MaxLength = 5;
+            this.desiredPitchTB.Name = "desiredPitchTB";
+            this.desiredPitchTB.Size = new System.Drawing.Size(78, 30);
+            this.desiredPitchTB.TabIndex = 0;
+            this.desiredPitchTB.Text = "-000°";
+            this.desiredPitchTB.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.desiredPitchTB.MouseClick += new System.Windows.Forms.MouseEventHandler(this.desiredPitchTB_MouseClick);
+            this.desiredPitchTB.TextChanged += new System.EventHandler(this.desiredPitchTB_TextChanged);
+            // 
+            // desiredYawGB
+            // 
+            this.desiredYawGB.Controls.Add(this.desiredYawTB);
+            this.desiredYawGB.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.desiredYawGB.Location = new System.Drawing.Point(186, 20);
+            this.desiredYawGB.Name = "desiredYawGB";
+            this.desiredYawGB.Size = new System.Drawing.Size(114, 58);
+            this.desiredYawGB.TabIndex = 4;
+            this.desiredYawGB.TabStop = false;
+            this.desiredYawGB.Text = "Desired Yaw";
+            // 
+            // desiredYawTB
+            // 
+            this.desiredYawTB.BackColor = System.Drawing.Color.Lime;
+            this.desiredYawTB.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(222)));
+            this.desiredYawTB.ForeColor = System.Drawing.SystemColors.MenuText;
+            this.desiredYawTB.Location = new System.Drawing.Point(17, 24);
+            this.desiredYawTB.MaxLength = 5;
+            this.desiredYawTB.Name = "desiredYawTB";
+            this.desiredYawTB.Size = new System.Drawing.Size(78, 30);
+            this.desiredYawTB.TabIndex = 0;
+            this.desiredYawTB.Text = "-000°";
+            this.desiredYawTB.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.desiredYawTB.MouseClick += new System.Windows.Forms.MouseEventHandler(this.desiredYawTB_MouseClick);
+            this.desiredYawTB.TextChanged += new System.EventHandler(this.desiredYawTB_TextChanged);
+            // 
+            // polarChart
+            // 
+            this.polarChart.BackColor = System.Drawing.SystemColors.MenuBar;
+            chartArea1.AxisX.InterlacedColor = System.Drawing.Color.White;
+            chartArea1.AxisX.LabelStyle.Enabled = false;
+            chartArea1.AxisX.MajorGrid.LineColor = System.Drawing.Color.Transparent;
+            chartArea1.AxisX.MajorTickMark.Enabled = false;
+            chartArea1.AxisX.Maximum = 180D;
+            chartArea1.AxisX.Minimum = -180D;
+            chartArea1.AxisX.ScaleView.Zoomable = false;
+            chartArea1.AxisX2.InterlacedColor = System.Drawing.Color.White;
+            chartArea1.AxisY.InterlacedColor = System.Drawing.Color.Gainsboro;
+            chartArea1.AxisY.IsInterlaced = true;
+            chartArea1.AxisY.LabelStyle.Enabled = false;
+            chartArea1.AxisY.LineColor = System.Drawing.Color.Transparent;
+            chartArea1.AxisY.MajorTickMark.Enabled = false;
+            chartArea1.AxisY.Maximum = 90D;
+            chartArea1.AxisY.Minimum = -90D;
+            chartArea1.AxisY.ScaleView.Zoomable = false;
+            chartArea1.Name = "polarChartArea";
+            this.polarChart.ChartAreas.Add(chartArea1);
+            legend1.BackColor = System.Drawing.Color.White;
+            legend1.BorderColor = System.Drawing.Color.Black;
+            legend1.Name = "polarChartLegend";
+            legend1.Position.Auto = false;
+            legend1.Position.Height = 13.84083F;
+            legend1.Position.Width = 43.85965F;
+            legend1.Position.X = 53.14035F;
+            legend1.Position.Y = 3F;
+            this.polarChart.Legends.Add(legend1);
+            this.polarChart.Location = new System.Drawing.Point(537, 12);
+            this.polarChart.Name = "polarChart";
+            series1.ChartArea = "polarChartArea";
+            series1.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
+            series1.Color = System.Drawing.Color.Transparent;
+            series1.Legend = "polarChartLegend";
+            series1.LegendText = "Current position";
+            series1.MarkerBorderColor = System.Drawing.Color.Transparent;
+            series1.MarkerBorderWidth = 0;
+            series1.MarkerColor = System.Drawing.Color.Red;
+            series1.MarkerSize = 14;
+            series1.MarkerStyle = System.Windows.Forms.DataVisualization.Charting.MarkerStyle.Cross;
+            series1.Name = "currentPolarPos";
+            series2.ChartArea = "polarChartArea";
+            series2.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Polar;
+            series2.Color = System.Drawing.Color.Transparent;
+            series2.Legend = "polarChartLegend";
+            series2.LegendText = "Destination Position";
+            series2.MarkerBorderColor = System.Drawing.Color.RoyalBlue;
+            series2.MarkerBorderWidth = 3;
+            series2.MarkerColor = System.Drawing.Color.Transparent;
+            series2.MarkerSize = 12;
+            series2.MarkerStyle = System.Windows.Forms.DataVisualization.Charting.MarkerStyle.Circle;
+            series2.Name = "destPolarPos";
+            this.polarChart.Series.Add(series1);
+            this.polarChart.Series.Add(series2);
+            this.polarChart.Size = new System.Drawing.Size(343, 290);
+            this.polarChart.TabIndex = 8;
+            this.polarChart.Visible = false;
             // 
             // orientationWin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(892, 312);
+            this.ClientSize = new System.Drawing.Size(892, 404);
+            this.Controls.Add(this.polarChart);
+            this.Controls.Add(this.desiredOrientationGB);
             this.Controls.Add(this.cartesianCoordPict);
             this.Controls.Add(this.displayGB);
-            this.Controls.Add(this.orientationPictureBox);
             this.Controls.Add(this.orientationGB);
             this.Controls.Add(this.configGB);
             this.Controls.Add(this.SerialGB);
             this.Controls.Add(this.calibGB);
+            this.Controls.Add(this.orientationPictureBox);
             this.MaximizeBox = false;
             this.Name = "orientationWin";
             this.Text = "Screwdriver orientations";
@@ -434,6 +645,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.orientationPictureBox)).EndInit();
             this.displayGB.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.cartesianCoordPict)).EndInit();
+            this.desiredOrientationGB.ResumeLayout(false);
+            this.pitchDiffGB.ResumeLayout(false);
+            this.yawDiffGB.ResumeLayout(false);
+            this.desiredPitchGB.ResumeLayout(false);
+            this.desiredPitchGB.PerformLayout();
+            this.desiredYawGB.ResumeLayout(false);
+            this.desiredYawGB.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.polarChart)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -470,6 +689,17 @@
         private System.Windows.Forms.CheckBox fillCB;
         private System.Windows.Forms.PictureBox cartesianCoordPict;
         private System.Windows.Forms.CheckBox arrowsCB;
+        private System.Windows.Forms.GroupBox desiredOrientationGB;
+        private System.Windows.Forms.Button destinationButton;
+        private System.Windows.Forms.GroupBox desiredPitchGB;
+        private System.Windows.Forms.TextBox desiredPitchTB;
+        private System.Windows.Forms.GroupBox desiredYawGB;
+        private System.Windows.Forms.TextBox desiredYawTB;
+        private System.Windows.Forms.GroupBox pitchDiffGB;
+        private System.Windows.Forms.Label pitchDiffLabel;
+        private System.Windows.Forms.GroupBox yawDiffGB;
+        private System.Windows.Forms.Label yawDiffLabel;
+        private System.Windows.Forms.DataVisualization.Charting.Chart polarChart;
     }
 }
 

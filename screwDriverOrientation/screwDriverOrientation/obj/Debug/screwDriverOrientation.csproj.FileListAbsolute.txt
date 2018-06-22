@@ -68,3 +68,9 @@ C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\MPU9250Interface\screwDriverOrienta
 C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\MPU9250Interface\screwDriverOrientation\screwDriverOrientation\bin\Debug\System.Numerics.Vectors.dll
 C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\MPU9250Interface\screwDriverOrientation\screwDriverOrientation\bin\Debug\System.Numerics.Vectors.xml
 C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\MPU9250Interface\screwDriverOrientation\screwDriverOrientation\obj\Debug\screwDriverOrientation.csproj.CopyComplete
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\MPU9250Interface\screwDriverOrientation\screwDriverOrientation\bin\Debug\SharpGL.dll
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\MPU9250Interface\screwDriverOrientation\screwDriverOrientation\bin\Debug\SharpGL.SceneGraph.dll
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\MPU9250Interface\screwDriverOrientation\screwDriverOrientation\bin\Debug\SharpGL.pdb
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\MPU9250Interface\screwDriverOrientation\screwDriverOrientation\bin\Debug\SharpGL.xml
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\MPU9250Interface\screwDriverOrientation\screwDriverOrientation\bin\Debug\SharpGL.SceneGraph.pdb
+C:\Users\Toshiba\Documents\Vincent MAIRE\MPU\MPU9250Interface\screwDriverOrientation\screwDriverOrientation\bin\Debug\SharpGL.SceneGraph.xml

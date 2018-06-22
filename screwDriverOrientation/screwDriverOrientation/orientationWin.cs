@@ -10,12 +10,13 @@ namespace screwDriverOrientation
     {
         mag magnetometer = new mag();
         float yaw, pitch, roll;
+        float desired_yaw, desired_pitch;
         float ax = 0, ay = 0, az = 0;
         float gx = 0, gy = 0, gz = 0;
         float mx = 0, my = 0, mz = 0;
         AHRS.MahonyAHRS AHRSFilter = new AHRS.MahonyAHRS(0.005f,15.0f,0.0f);
         private BufferedGraphics g_buff;
-        Quaternion quat, quat_orig, quat_trans;
+        Quaternion raw_quat, quat_orig, quat_trans;
 
         private class mag
         {
@@ -80,7 +81,6 @@ namespace screwDriverOrientation
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    // The values should lie from -500 to +500
                     mag_coefs[i] = 2 / (mag_max[i] - mag_min[i]);
                     mag_offsets[i] = (mag_min[i] + mag_max[i]) / 2;
                     mag_values_corr[i] = mag_values[i] * mag_coefs[i] - mag_offsets[i];
@@ -129,7 +129,6 @@ namespace screwDriverOrientation
             Rectangle disp_area = new Rectangle(0, 0, orientationPictureBox.Width, orientationPictureBox.Height);
             g_buff = buff_context.Allocate(orientationPictureBox.CreateGraphics(), disp_area);
             g_buff.Graphics.TranslateTransform(orientationPictureBox.Width / 2, orientationPictureBox.Height / 2);
-            g_buff.Graphics.Clear(Color.LightGray);
 
             quat_trans = new Quaternion(0, 0, 0, 1);
         }
@@ -154,6 +153,8 @@ namespace screwDriverOrientation
             yaw = 0;
             pitch = 0;
             roll = 0;
+            desired_yaw = 0;
+            desired_pitch = 0;
             quat_orig = new Quaternion(0, 0, 0, 1);
         }
 
@@ -162,6 +163,15 @@ namespace screwDriverOrientation
             yawLabel.Text = " ---.-°";
             pitchLabel.Text = " ---.-°";
             rollLabel.Text = " ---.-°";
+            desiredYawTB.Text = "000°";
+            desiredYawTB.BackColor = Color.Lime;
+            desiredPitchTB.Text = "000°";
+            desiredPitchTB.BackColor = Color.Lime;
+            yawDiffLabel.Text = "---.-°";
+            pitchDiffLabel.Text = "---.-°";
+            yawDiffLabel.ForeColor = Color.Black;
+            pitchDiffLabel.Text = "---.-°";
+            pitchDiffLabel.ForeColor = Color.Black;
             calibProgress.Value = 0;
         }
 
@@ -186,11 +196,11 @@ namespace screwDriverOrientation
             {
                 AHRSFilter.Update(deg2rad(gx), deg2rad(gy), deg2rad(gz), ax, ay, az, mx, my, mz);
                 float[] q = AHRSFilter.Quaternion;
-                quat = new Quaternion(q[1], q[2], q[3], q[0]);
+                raw_quat = new Quaternion(q[1], q[2], q[3], q[0]);
 
                 // Apply origin offset
-                Quaternion delta_q = quat * Quaternion.Inverse(quat_orig);
-                quat_trans = Quaternion.Inverse(quat_orig) * delta_q * quat_orig;
+                Quaternion delta_quat_orig = raw_quat * Quaternion.Inverse(quat_orig);
+                quat_trans = Quaternion.Inverse(quat_orig) * delta_quat_orig * quat_orig;
 
                 QuatToEuler(quat_trans, ref yaw, ref pitch, ref roll);
             }
@@ -221,6 +231,13 @@ namespace screwDriverOrientation
                     set_zeros_orientation();
                     magnetometer.reset_mag_values();
                     orientationPictureBox.Enabled = true;
+                    desiredOrientationGB.Enabled = true;
+                    desiredYawGB.Enabled = true;
+                    desiredPitchGB.Enabled = true;
+                    yawDiffGB.Enabled = false;
+                    pitchDiffGB.Enabled = false;
+                    orientationPictureBox.Visible = true;
+                    cartesianCoordPict.Visible = true;
                     g_buff.Graphics.Clear(Color.White);
                 }
                 catch
@@ -247,6 +264,11 @@ namespace screwDriverOrientation
             displayGB.Enabled = false;
             filterTimer.Enabled = false;
             orientationPictureBox.Enabled = false;
+            desiredOrientationGB.Enabled = false;
+            destinationButton.Text = "Reach destination";
+            polarChart.Visible = false;
+            orientationPictureBox.Visible = false;
+            cartesianCoordPict.Visible = false;
             print_default_YPR_disp();
         }
 
@@ -269,6 +291,88 @@ namespace screwDriverOrientation
             magnetometer.reset_mag_values();
         }
 
+        private void destinationButton_Click(object sender, EventArgs e)
+        {
+            if (destinationButton.Text == "Reach destination" && desiredYawTB.BackColor == Color.Lime && desiredPitchTB.BackColor == Color.Lime)
+            {
+                destinationButton.Text = "Cancel";
+                desiredYawGB.Enabled = false;
+                desiredPitchGB.Enabled = false;
+                yawDiffGB.Enabled = true;
+                pitchDiffGB.Enabled = true;
+                polarChart.Visible = true;
+                orientationPictureBox.Visible = false;
+                cartesianCoordPict.Visible = false;
+                polarChart.Series["destPolarPos"].Points.Clear();
+                polarChart.Series["destPolarPos"].Points.AddXY(desired_yaw, desired_pitch);
+            }
+            else
+            {
+                destinationButton.Text = "Reach destination";
+                desiredYawGB.Enabled = true;
+                desiredPitchGB.Enabled = true;
+                yawDiffGB.Enabled = false;
+                pitchDiffGB.Enabled = false;
+                polarChart.Visible = false;
+                orientationPictureBox.Visible = true;
+                cartesianCoordPict.Visible = true;
+            }
+        }
+
+        private void desiredYawTB_MouseClick(object sender, MouseEventArgs e)
+        {
+            desiredYawTB.Text = "";
+        }
+
+        private void desiredPitchTB_MouseClick(object sender, MouseEventArgs e)
+        {
+            desiredPitchTB.Text = "";
+        }
+
+        private void desiredYawTB_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                string strTB = desiredYawTB.Text;
+                strTB = strTB.Replace('°'.ToString(), string.Empty);
+                desired_yaw = (float)int.Parse(strTB);
+                if (Math.Abs(desired_yaw) > 180)
+                    desiredYawTB.BackColor = Color.Red;
+                else
+                {
+                    desiredYawTB.BackColor = Color.Lime;
+                    desiredYawTB.Text = strTB + '°';
+                    desiredYawTB.SelectionStart = desiredYawTB.Text.Length - 1;
+                }
+            }
+            catch
+            {
+                desiredYawTB.BackColor = Color.Red;
+            }
+        }
+
+        private void desiredPitchTB_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                string strTB = desiredPitchTB.Text;
+                strTB = strTB.Replace('°'.ToString(), string.Empty);
+                desired_pitch = (float)int.Parse(strTB);
+                if (Math.Abs(desired_pitch) > 90)
+                    desiredPitchTB.BackColor = Color.Red;
+                else
+                {
+                    desiredPitchTB.BackColor = Color.Lime;
+                    desiredPitchTB.Text = strTB + '°';
+                    desiredPitchTB.SelectionStart = desiredPitchTB.Text.Length - 1;
+                }
+            }
+            catch
+            {
+                desiredPitchTB.BackColor = Color.Red;
+            }
+        }
+
         private void cuboidCB_CheckedChanged(object sender, EventArgs e)
         {
             if (cuboidCB.Checked)
@@ -289,10 +393,10 @@ namespace screwDriverOrientation
 
         private void setOriginButton_Click(object sender, EventArgs e)
         {
-            quat_orig.X = quat.X;
-            quat_orig.Y = quat.Y;
-            quat_orig.Z = quat.Z;
-            quat_orig.W = quat.W;
+            quat_orig.X = raw_quat.X;
+            quat_orig.Y = raw_quat.Y;
+            quat_orig.Z = raw_quat.Z;
+            quat_orig.W = raw_quat.W;
         }
 
         private void serialPortObj_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
@@ -363,7 +467,31 @@ namespace screwDriverOrientation
             rollLabel.Text = roll.ToString("000.0°");
 
             calibProgress.Value = (int)magnetometer.get_value_progress_bar_calib();
-            draw_orientation(yaw, pitch, roll);
+
+            if (yawDiffGB.Enabled)
+            {
+                yawDiffLabel.Text = (desired_yaw - yaw).ToString("000.0°");
+                if (Math.Abs(desired_yaw - yaw) < 2f)
+                    yawDiffLabel.ForeColor = Color.Lime;
+                else
+                    yawDiffLabel.ForeColor = Color.Black;
+                pitchDiffLabel.Text = (desired_pitch - pitch).ToString("000.0°");
+                if (Math.Abs(desired_pitch - pitch) < 2f)
+                    pitchDiffLabel.ForeColor = Color.Lime;
+                else
+                    pitchDiffLabel.ForeColor = Color.Black;
+                if (Math.Abs(desired_yaw - yaw) < 2f && Math.Abs(desired_pitch - pitch) < 2f)
+                    polarChart.Series["currentPolarPos"].MarkerColor = Color.Lime;
+                else
+                    polarChart.Series["currentPolarPos"].MarkerColor = Color.Red;
+
+                polarChart.Series["currentPolarPos"].Points.Clear();
+                polarChart.Series["currentPolarPos"].Points.AddXY(yaw, pitch);
+            }
+            else
+            {
+                draw_orientation(yaw, pitch, roll);
+            }
         }
 
         private void draw_orientation(float yaw, float pitch, float roll)
@@ -452,7 +580,7 @@ namespace screwDriverOrientation
             rotate_matrix(p3);
 
             int[] ind = { 0, 1, 2, 3 };
-            float[] val = { 0, p1[0], p2[0], p3[0] };
+            float[] val = { 0.0f, p1[0], p2[0], p3[0] };
             for (int i=0; i<3; i++)
             {
                 if (val[i] > val[i + 1])
@@ -465,9 +593,10 @@ namespace screwDriverOrientation
                     tmp_ind = ind[i];
                     ind[i] = ind[i + 1];
                     ind[i + 1] = tmp_ind;
-                    i = 0;
+                    i = -1;
                 }
             }
+
             for (int i = 0; i < 4; i++)
             {
                 if (ind[i] == 0)
