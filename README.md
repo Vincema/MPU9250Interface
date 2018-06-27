@@ -1,2 +1,2 @@
 # MPU9250Interface
-Arduino code + C#
+Contains the arduino software, the c# windows form and a python scripts that displays the magnetometer values for calibration.
