@@ -20,7 +20,7 @@ namespace screwDriverOrientation
 
         private class mag
         {
-            private const int progress_low_pass_sample_nb = 200;
+            private const int progress_low_pass_sample_nb = 50;
             private float[] mag_values = new float[3];
             public float[] mag_values_corr { get; set; }
             private float[] mag_max = new float[3];
@@ -303,6 +303,7 @@ namespace screwDriverOrientation
                 polarChart.Visible = true;
                 orientationPictureBox.Visible = false;
                 cartesianCoordPict.Visible = false;
+                displayGB.Enabled = false;
                 polarChart.Series["destPolarPos"].Points.Clear();
                 polarChart.Series["destPolarPos"].Points.AddXY(desired_yaw, desired_pitch);
             }
@@ -316,6 +317,7 @@ namespace screwDriverOrientation
                 polarChart.Visible = false;
                 orientationPictureBox.Visible = true;
                 cartesianCoordPict.Visible = true;
+                displayGB.Enabled = true;
             }
         }
 
@@ -407,22 +409,22 @@ namespace screwDriverOrientation
                 string[] datas = line.Split(' ');
                 if (datas[0] == "ACCEL")
                 {
-                    ax = -float.Parse(datas[1]);
-                    ay = -float.Parse(datas[2]);
+                    ax = float.Parse(datas[1]);
+                    ay = float.Parse(datas[2]);
                     az = float.Parse(datas[3]);
                     //Console.WriteLine("A " + ax.ToString() + " " + ay.ToString() + " " + az.ToString());
                 }
                 else if (datas[0] == "GYRO")
                 {
-                    gx = -float.Parse(datas[1]);
-                    gy = -float.Parse(datas[2]);
+                    gx = float.Parse(datas[1]);
+                    gy = float.Parse(datas[2]);
                     gz = float.Parse(datas[3]);
                     //Console.WriteLine("G " + gx.ToString() + " " + gy.ToString() + " " + gz.ToString());
                 }
                 else if (datas[0] == "MAG")
                 {
-                    my = float.Parse(datas[1]);
-                    mx = float.Parse(datas[2]);
+                    my = -float.Parse(datas[1]);
+                    mx = -float.Parse(datas[2]);
                     mz = float.Parse(datas[3]);
 
                     //Console.WriteLine("M " + mx.ToString() + " " + my.ToString() + " " + mz.ToString());
@@ -501,14 +503,14 @@ namespace screwDriverOrientation
             {
                 float h = 15, w = 75, l = 35;
 
-                float[] pc1 = { l, 0, 0 };
-                float[] pc2 = { l, 0, -h };
-                float[] pc3 = { l, w, 0 };
-                float[] pc4 = { l, w, -h };
+                float[] pc1 = { -l, 0, 0 };
+                float[] pc2 = { -l, 0, -h };
+                float[] pc3 = { -l, -w, 0 };
+                float[] pc4 = { -l, -w, -h };
                 float[] pc5 = { 0, 0, 0 };
                 float[] pc6 = { 0, 0, -h };
-                float[] pc7 = { 0, w, 0 };
-                float[] pc8 = { 0, w, -h };
+                float[] pc7 = { 0, -w, 0 };
+                float[] pc8 = { 0, -w, -h };
 
                 rotate_matrix(pc1);
                 rotate_matrix(pc2);
@@ -571,8 +573,8 @@ namespace screwDriverOrientation
             // Compass
             float norm = 120;
 
-            float[] p1 = { norm, 0, 0 };
-            float[] p2 = { 0, norm, 0 };
+            float[] p1 = { -norm, 0, 0 };
+            float[] p2 = { 0, -norm, 0 };
             float[] p3 = { 0, 0, -norm };
 
             rotate_matrix(p1);
