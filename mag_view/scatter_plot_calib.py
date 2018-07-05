@@ -17,7 +17,7 @@ for i in range(n):
         cal.append(i)
 
 datas_non_cal = datas[raw,1:]
-datas_cal = datas[cal,1:]
+datas_cal = 50*datas[cal,1:]
 
 """
 datas_non_cal = np.array([])
@@ -33,12 +33,12 @@ else:
 """
 
 # Plots
-min_bound = -600
-max_bound = 600
-sphere_size = 500
+min_bound = -70
+max_bound = 70
+sphere_size = 50
 
 fig = plt.figure()
-plt.subplot(221)
+plt.subplot(131)
 plt.plot(datas_non_cal[:,0],datas_non_cal[:,1],'.r',ms=1)
 plt.plot(datas_cal[:,0],datas_cal[:,1],'.b',ms=1)
 plt.xlabel("X")
@@ -48,7 +48,7 @@ plt.plot(sphere_size*np.sin(theta), sphere_size*np.cos(theta),c='k')
 plt.gca().set_aspect('equal', adjustable='box')
 plt.axis([min_bound,max_bound,min_bound,max_bound])
 
-plt.subplot(222)
+plt.subplot(132)
 plt.plot(datas_non_cal[:,1],datas_non_cal[:,2],'.r',ms=1)
 plt.plot(datas_cal[:,1],datas_cal[:,2],'.b',ms=1)
 plt.xlabel("Y")
@@ -58,7 +58,7 @@ plt.plot(sphere_size*np.sin(theta), sphere_size*np.cos(theta),c='k')
 plt.gca().set_aspect('equal', adjustable='box')
 plt.axis([min_bound,max_bound,min_bound,max_bound])
 
-plt.subplot(223)
+plt.subplot(133)
 plt.plot(datas_non_cal[:,2],datas_non_cal[:,0],'.r',ms=1)
 plt.plot(datas_cal[:,2],datas_cal[:,0],'.b',ms=1)
 plt.xlabel("Z")
@@ -70,8 +70,8 @@ plt.axis([min_bound,max_bound,min_bound,max_bound])
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
-ax.scatter(datas_non_cal[:,0],datas_non_cal[:,1],datas_non_cal[:,2],c='r')
-ax.scatter(datas_cal[:,0],datas_cal[:,1],datas_cal[:,2],c='b')
+ax.scatter(datas_non_cal[:,0],datas_non_cal[:,1],datas_non_cal[:,2],c='r',s=1)
+ax.scatter(datas_cal[:,0],datas_cal[:,1],datas_cal[:,2],c='b',s=1)
 ax.set_xlim(min_bound,max_bound)
 ax.set_ylim(min_bound,max_bound)
 ax.set_zlim(min_bound,max_bound)

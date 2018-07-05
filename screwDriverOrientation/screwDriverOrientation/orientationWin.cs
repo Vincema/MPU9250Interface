@@ -101,7 +101,7 @@ namespace screwDriverOrientation
             {
                 
                 double norm = get_norm(mag_values_corr);
-                int pgValue = (int)(100 - (Math.Ceiling(Math.Abs(1 - norm) * 100.0f)));
+                int pgValue = (int)(100 * (1 - Math.Abs(1 - (norm / 1))));
                 if (pgValue < 0)
                     pgValue = 0;
 
@@ -129,8 +129,9 @@ namespace screwDriverOrientation
             Rectangle disp_area = new Rectangle(0, 0, orientationPictureBox.Width, orientationPictureBox.Height);
             g_buff = buff_context.Allocate(orientationPictureBox.CreateGraphics(), disp_area);
             g_buff.Graphics.TranslateTransform(orientationPictureBox.Width / 2, orientationPictureBox.Height / 2);
+            g_buff.Graphics.RotateTransform(180);
 
-            quat_trans = new Quaternion(0, 0, 0, 1);
+           quat_trans = new Quaternion(0, 0, 0, 1);
         }
 
         private void refresh_serial_combobox()
@@ -194,7 +195,7 @@ namespace screwDriverOrientation
         {
             if (!float.IsNaN(mx) && !float.IsNaN(my) && !float.IsNaN(mz))
             {
-                AHRSFilter.Update(deg2rad(gx), deg2rad(gy), deg2rad(gz), ax, ay, az, mx, my, mz);
+                AHRSFilter.Update(deg2rad(gx), deg2rad(gy), deg2rad(gz), ax, ay, az, my, mx, -mz);
                 float[] q = AHRSFilter.Quaternion;
                 raw_quat = new Quaternion(q[1], q[2], q[3], q[0]);
 
@@ -221,6 +222,7 @@ namespace screwDriverOrientation
                     connectButton.Enabled = false;
                     orientationGB.Enabled = true;
                     refreshButton.Enabled = false;
+                    serialPortCombo.Enabled = false;
                     refreshTimer.Enabled = true;
                     configGB.Enabled = true;
                     calibGB.Enabled = true;
@@ -255,6 +257,7 @@ namespace screwDriverOrientation
             }
             disconnectButton.Enabled = false;
             connectButton.Enabled = true;
+            serialPortCombo.Enabled = true;
             refreshTimer.Enabled = false;
             refreshButton.Enabled = true;
             configGB.Enabled = false;
@@ -353,6 +356,11 @@ namespace screwDriverOrientation
             }
         }
 
+        private void serialPortCombo_MouseClick(object sender, MouseEventArgs e)
+        {
+            refresh_serial_combobox();
+        }
+
         private void desiredPitchTB_TextChanged(object sender, EventArgs e)
         {
             try
@@ -423,8 +431,8 @@ namespace screwDriverOrientation
                 }
                 else if (datas[0] == "MAG")
                 {
-                    my = -float.Parse(datas[1]);
-                    mx = -float.Parse(datas[2]);
+                    mx = float.Parse(datas[1]);
+                    my = float.Parse(datas[2]);
                     mz = float.Parse(datas[3]);
 
                     //Console.WriteLine("M " + mx.ToString() + " " + my.ToString() + " " + mz.ToString());
@@ -503,14 +511,14 @@ namespace screwDriverOrientation
             {
                 float h = 15, w = 75, l = 35;
 
-                float[] pc1 = { -l, 0, 0 };
-                float[] pc2 = { -l, 0, -h };
-                float[] pc3 = { -l, -w, 0 };
-                float[] pc4 = { -l, -w, -h };
+                float[] pc1 = { l, 0, 0 };
+                float[] pc2 = { l, 0, h };
+                float[] pc3 = { l, w, 0 };
+                float[] pc4 = { l, w, h };
                 float[] pc5 = { 0, 0, 0 };
-                float[] pc6 = { 0, 0, -h };
-                float[] pc7 = { 0, -w, 0 };
-                float[] pc8 = { 0, -w, -h };
+                float[] pc6 = { 0, 0, h };
+                float[] pc7 = { 0, w, 0 };
+                float[] pc8 = { 0, w, h };
 
                 rotate_matrix(pc1);
                 rotate_matrix(pc2);
@@ -573,9 +581,9 @@ namespace screwDriverOrientation
             // Compass
             float norm = 120;
 
-            float[] p1 = { -norm, 0, 0 };
-            float[] p2 = { 0, -norm, 0 };
-            float[] p3 = { 0, 0, -norm };
+            float[] p1 = { norm, 0, 0 };
+            float[] p2 = { 0, norm, 0 };
+            float[] p3 = { 0, 0, norm };
 
             rotate_matrix(p1);
             rotate_matrix(p2);
@@ -585,7 +593,7 @@ namespace screwDriverOrientation
             float[] val = { 0.0f, p1[0], p2[0], p3[0] };
             for (int i=0; i<3; i++)
             {
-                if (val[i] > val[i + 1])
+                if (val[i] < val[i + 1])
                 {
                     float tmp_val;
                     tmp_val = val[i];
